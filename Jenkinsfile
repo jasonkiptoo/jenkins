@@ -1,88 +1,45 @@
-// pipeline {
-//     agent any
-
-//     environment {
-//         VENV = 'venv'  // Virtual environment directory
-//     }
-
-//     stages {
-//         stage('Clone Repository') {
-//             steps {
-//                 // Clone the repository
-//                 git branch: 'main', url: 'https://github.com/jasonkiptoo/test-jenkins.git'
-//             }
-//         }
-
-//         stage('Setup Virtual Environment') {
-//             steps {
-//                 script {
-//                     sh '''
-//                     python3 -m venv venv
-//                     . venv/bin/activate
-//                     pip install --upgrade pip
-//                     pip install -r requirements.txt
-//                     '''
-//                 }
-//             }
-//         }
-//         stage('Run Unit Tests') {
-//             steps {
-//                 // Run the unit tests within the virtual environment
-//                 sh '''
-//                 . ${VENV}/bin/activate
-//                 python -m unittest discover tests
-//                 '''
-//             }
-//         }
-
-//         stage('Deploy') {
-//             steps {
-//                 echo 'Deploying the Flask application...'
-//                 // Placeholder for deployment steps
-//             }
-//         }
-//     }
-
-//     post {
-//         success {
-//             echo 'Pipeline completed successfully!'
-//         }
-//         failure {
-//             echo 'Pipeline failed. Check the logs.'
-//         }
-//     }
-// }
-
-
-
 pipeline {
     agent any
-stages {
+    stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/jasonkiptoo/test-jenkins.git'
+                // Clone your Git repository
+                git branch: 'main', url: 'https://github.com/jasonkiptoo/test-jenkins.git'
+
+                // git 'https://github.com/yourusername/your-flask-app.git'
             }
         }
-        stage('Build Docker Image') {
+        stage('Install Dependencies') {
             steps {
-                script {
-                    dockerImage = docker.build("username/sample-app:latest")
-                }
+                // Install dependencies (assuming you have a requirements.txt file)
+                sh 'pip install -r requirements.txt'
             }
         }
-        stage('Push Docker Image') {
+        stage('Run Tests') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        dockerImage.push()
-                    }
-                }
+                // Run your tests
+                sh 'python run_tests.py'
             }
         }
-        stage('Deploy to Kubernetes') {
+        stage('Build') {
             steps {
-                kubernetesDeploy configs: 'deployment.yaml', kubeconfigId: 'kubeconfig-id'
+                // Optional: Run any build steps
+                echo 'Building the application...'
             }
+        }
+        stage('Deploy') {
+            steps {
+                // Optional: Deploy steps (e.g., copy files, restart server)
+                echo 'Deploying the application...'
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
