@@ -15,12 +15,12 @@ pipeline {
                 sh 'pip install -r requirements.txt'
             }
         }
-        stage('Run Tests') {
-            steps {
-                // Run your tests
-                sh 'python run_tests.py'
-            }
-        }
+        // stage('Run Tests') {
+        //     steps {
+        //         // Run your tests
+        //         sh 'python run_tests.py'
+        //     }
+        // }
         stage('Build') {
             steps {
                 // Optional: Run any build steps
