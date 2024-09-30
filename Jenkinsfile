@@ -13,21 +13,18 @@ pipeline {
             }
         }
 
-        stage('Setup Python Environment') {
+        stage('Setup Virtual Environment') {
             steps {
-                // Create a virtual environment
-                sh 'python3 -m venv ${VENV}'
-                // Ensure the virtual environment is created with correct permissions
-                sh 'sudo chown -R jenkins:jenkins ${VENV}'
-                // Install dependencies using pip in the virtual environment
-                sh '''
-                . ${VENV}/bin/activate
-                pip install --upgrade pip
-                pip install -r requirements.txt
-                '''
+                script {
+                    sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                    '''
+                }
             }
         }
-
         stage('Run Unit Tests') {
             steps {
                 // Run the unit tests within the virtual environment
